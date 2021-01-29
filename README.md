@@ -1,8 +1,7 @@
 # Jump-Core
 Core Library (ripped off from 2910 until I figure out what it does)
 
-
-Installation Instructions:
+## Installation Instructions:
 
 Download Jump-Core.jar from https://github.com/Team8262/Jump-Core/releases/tag/v1.0
 
