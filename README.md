@@ -14,7 +14,7 @@ Put Jump-Core.jar in 'libs'
 
 In the build.gradle file, add this line: 
 
-implementation fileTree(dir: 'libs', include: ['*.jar'])
+  implementation fileTree(dir: 'libs', include: ['*.jar'])
 
 <img width="626" alt="Screen Shot 2021-01-23 at 4 19 29 PM" src="https://user-images.githubusercontent.com/57124298/105617890-fe6d8500-5d96-11eb-9f15-92a077252eee.png">
 
