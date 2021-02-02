@@ -96,33 +96,33 @@ public class Mk2SwerveDrivetrainFalcon extends SubsystemBase {
         frontLeftModule = new Mk2SwerveModuleBuilder(
             new Vector2(TRACKWIDTH / 2.0, WHEELBASE / 2.0))
             .angleEncoder(new AnalogInput(DRIVETRAIN_FL_ENCODER), FRONT_LEFT_ANGLE_OFFSET)
-            .angleMotor(new TalonFX(DRIVETRAIN_FL_STEER),
-                    Mk2SwerveModuleBuilder.MotorType.FALCON_500)
-            .driveMotor(new TalonFX(DRIVETRAIN_FL_DRIVE),
-                    Mk2SwerveModuleBuilder.MotorType.FALCON_500)
+            .angleMotor(new CANSparkMax(DRIVETRAIN_FL_STEER, CANSparkMaxLowLevel.MotorType.kBrushless),
+                    Mk2SwerveModuleBuilder.MotorType.NEO)
+            .driveMotor(new CANSparkMax(DRIVETRAIN_FL_DRIVE, CANSparkMaxLowLevel.MotorType.kBrushless),
+                    Mk2SwerveModuleBuilder.MotorType.NEO)
             .build();
     frontRightModule = new Mk2SwerveModuleBuilder(
             new Vector2(TRACKWIDTH / 2.0, -WHEELBASE / 2.0))
             .angleEncoder(new AnalogInput(DRIVETRAIN_FR_ENCODER), FRONT_RIGHT_ANGLE_OFFSET)
-            .angleMotor(new TalonFX(DRIVETRAIN_FR_STEER),
+            .angleMotor(new CANSparkMax(DRIVETRAIN_FR_STEER, CANSparkMaxLowLevel.MotorType.kBrushless),
                     Mk2SwerveModuleBuilder.MotorType.FALCON_500)
-            .driveMotor(new TalonFX(DRIVETRAIN_FR_DRIVE),
+            .driveMotor(new CANSparkMax(DRIVETRAIN_FR_DRIVE, CANSparkMaxLowLevel.MotorType.kBrushless),
                     Mk2SwerveModuleBuilder.MotorType.FALCON_500)
             .build();
     backLeftModule = new Mk2SwerveModuleBuilder(
             new Vector2(-TRACKWIDTH / 2.0, WHEELBASE / 2.0))
             .angleEncoder(new AnalogInput(DRIVETRAIN_BL_ENCODER), BACK_LEFT_ANGLE_OFFSET)
-            .angleMotor(new TalonFX(DRIVETRAIN_BL_STEER),
+            .angleMotor(new CANSparkMax(DRIVETRAIN_BL_STEER, CANSparkMaxLowLevel.MotorType.kBrushless),
                     Mk2SwerveModuleBuilder.MotorType.FALCON_500)
-            .driveMotor(new TalonFX(DRIVETRAIN_BL_DRIVE),
+            .driveMotor(new CANSparkMax(DRIVETRAIN_BL_DRIVE, CANSparkMaxLowLevel.MotorType.kBrushless),
                     Mk2SwerveModuleBuilder.MotorType.FALCON_500)
             .build();
     backRightModule = new Mk2SwerveModuleBuilder(
             new Vector2(-TRACKWIDTH / 2.0, -WHEELBASE / 2.0))
             .angleEncoder(new AnalogInput(DRIVETRAIN_BR_ENCODER), BACK_RIGHT_ANGLE_OFFSET)
-            .angleMotor(new TalonFX(DRIVETRAIN_BR_STEER),
+            .angleMotor(new CANSparkMax(DRIVETRAIN_BR_STEER, CANSparkMaxLowLevel.MotorType.kBrushless),
                     Mk2SwerveModuleBuilder.MotorType.FALCON_500)
-            .driveMotor(new TalonFX(DRIVETRAIN_BR_DRIVE),
+            .driveMotor(new CANSparkMax(DRIVETRAIN_BR_DRIVE, CANSparkMaxLowLevel.MotorType.kBrushless),
                     Mk2SwerveModuleBuilder.MotorType.FALCON_500)
             .build();
 
