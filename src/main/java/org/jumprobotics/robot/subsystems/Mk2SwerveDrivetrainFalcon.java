@@ -56,6 +56,10 @@ public class Mk2SwerveDrivetrainFalcon extends SubsystemBase {
     public int DRIVETRAIN_BL_ENCODER;
     public int DRIVETRAIN_BR_ENCODER;
 
+    public double ANGLE_REDUCTION;
+    public double DRIVE_REDUCTION;
+    public double WHEEL_DIAMETER;
+
     private SwerveModule frontLeftModule,
                          frontRightModule,
                          backLeftModule,
@@ -64,8 +68,18 @@ public class Mk2SwerveDrivetrainFalcon extends SubsystemBase {
 
 
     public final Gyroscope gyroscope = new NavX(SPI.Port.kMXP);
+
+
     public Mk2SwerveDrivetrainFalcon(double trackwidth, double wheelbase, double[] angleOffsets, int[][] modulePorts, boolean invertedGyroscope) {
-        
+            this(trackwidth, wheelbase, angleOffsets, modulePorts, invertedGyroscope, 18.0 / 1.0, 8.31 / 1.0, 4.0);
+  }
+
+  public Mk2SwerveDrivetrainFalcon(double trackwidth, double wheelbase, double[] angleOffsets, int[][] modulePorts, boolean invertedGyroscope, double angleReduction, double driveReduction, double wheelDiameter){
+        //Maybe we don't need these, but might as well right?
+        ANGLE_REDUCTION = angleReduction;
+        DRIVE_REDUCTION = driveReduction;
+        WHEEL_DIAMETER = wheelDiameter;
+
         TRACKWIDTH = trackwidth;
         WHEELBASE = wheelbase;
     
@@ -96,34 +110,26 @@ public class Mk2SwerveDrivetrainFalcon extends SubsystemBase {
         frontLeftModule = new Mk2SwerveModuleBuilder(
             new Vector2(TRACKWIDTH / 2.0, WHEELBASE / 2.0))
             .angleEncoder(new AnalogInput(DRIVETRAIN_FL_ENCODER), FRONT_LEFT_ANGLE_OFFSET)
-            .angleMotor(new CANSparkMax(DRIVETRAIN_FL_STEER, CANSparkMaxLowLevel.MotorType.kBrushless),
-                    Mk2SwerveModuleBuilder.MotorType.NEO)
-            .driveMotor(new CANSparkMax(DRIVETRAIN_FL_DRIVE, CANSparkMaxLowLevel.MotorType.kBrushless),
-                    Mk2SwerveModuleBuilder.MotorType.NEO)
+            .angleMotor(new TalonFX(DRIVETRAIN_FL_STEER))
+            .driveMotor(new TalonFX(DRIVETRAIN_FL_DRIVE))
             .build();
     frontRightModule = new Mk2SwerveModuleBuilder(
             new Vector2(TRACKWIDTH / 2.0, -WHEELBASE / 2.0))
             .angleEncoder(new AnalogInput(DRIVETRAIN_FR_ENCODER), FRONT_RIGHT_ANGLE_OFFSET)
-            .angleMotor(new CANSparkMax(DRIVETRAIN_FR_STEER, CANSparkMaxLowLevel.MotorType.kBrushless),
-                    Mk2SwerveModuleBuilder.MotorType.FALCON_500)
-            .driveMotor(new CANSparkMax(DRIVETRAIN_FR_DRIVE, CANSparkMaxLowLevel.MotorType.kBrushless),
-                    Mk2SwerveModuleBuilder.MotorType.FALCON_500)
+            .angleMotor(new TalonFX(DRIVETRAIN_FR_STEER))
+            .driveMotor(new TalonFX(DRIVETRAIN_FR_DRIVE))
             .build();
     backLeftModule = new Mk2SwerveModuleBuilder(
             new Vector2(-TRACKWIDTH / 2.0, WHEELBASE / 2.0))
             .angleEncoder(new AnalogInput(DRIVETRAIN_BL_ENCODER), BACK_LEFT_ANGLE_OFFSET)
-            .angleMotor(new CANSparkMax(DRIVETRAIN_BL_STEER, CANSparkMaxLowLevel.MotorType.kBrushless),
-                    Mk2SwerveModuleBuilder.MotorType.FALCON_500)
-            .driveMotor(new CANSparkMax(DRIVETRAIN_BL_DRIVE, CANSparkMaxLowLevel.MotorType.kBrushless),
-                    Mk2SwerveModuleBuilder.MotorType.FALCON_500)
+            .angleMotor(new TalonFX(DRIVETRAIN_BL_STEER))
+            .driveMotor(new TalonFX(DRIVETRAIN_BL_DRIVE))
             .build();
     backRightModule = new Mk2SwerveModuleBuilder(
             new Vector2(-TRACKWIDTH / 2.0, -WHEELBASE / 2.0))
             .angleEncoder(new AnalogInput(DRIVETRAIN_BR_ENCODER), BACK_RIGHT_ANGLE_OFFSET)
-            .angleMotor(new CANSparkMax(DRIVETRAIN_BR_STEER, CANSparkMaxLowLevel.MotorType.kBrushless),
-                    Mk2SwerveModuleBuilder.MotorType.FALCON_500)
-            .driveMotor(new CANSparkMax(DRIVETRAIN_BR_DRIVE, CANSparkMaxLowLevel.MotorType.kBrushless),
-                    Mk2SwerveModuleBuilder.MotorType.FALCON_500)
+            .angleMotor(new TalonFX(DRIVETRAIN_BR_STEER))
+            .driveMotor(new TalonFX(DRIVETRAIN_BR_DRIVE))
             .build();
 
     kinematics = new SwerveDriveKinematics(
