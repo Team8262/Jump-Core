@@ -28,6 +28,7 @@ import org.jumprobotics.robot.drivers.SwerveModule;
 import org.jumprobotics.robot.math.Vector2;
 import org.jumprobotics.robot.drivers.Mk2SwerveModuleBuilder;
 import org.jumprobotics.robot.drivers.NavX;
+import org.jumprobotics.robot.drivers.ADIS16470;
 
 public class Mk2SwerveDrivetrainFalcon extends SubsystemBase {
   
@@ -67,14 +68,16 @@ public class Mk2SwerveDrivetrainFalcon extends SubsystemBase {
     private SwerveDriveKinematics kinematics;
 
 
-    public final Gyroscope gyroscope = new NavX(SPI.Port.kMXP);
+    public Gyroscope navGyroscope;
+    public ADIS16470 adGyroscope;
+    public boolean useNavX;
 
 
-    public Mk2SwerveDrivetrainFalcon(double trackwidth, double wheelbase, double[] angleOffsets, int[][] modulePorts, boolean invertedGyroscope) {
-            this(trackwidth, wheelbase, angleOffsets, modulePorts, invertedGyroscope, 18.0 / 1.0, 8.31 / 1.0, 4.0);
+    public Mk2SwerveDrivetrainFalcon(double trackwidth, double wheelbase, double[] angleOffsets, int[][] modulePorts, boolean invertedGyroscope, boolean navXAvailable) {
+            this(trackwidth, wheelbase, angleOffsets, modulePorts, invertedGyroscope, navXAvailable, 18.0 / 1.0, 8.31 / 1.0, 4.0);
   }
 
-  public Mk2SwerveDrivetrainFalcon(double trackwidth, double wheelbase, double[] angleOffsets, int[][] modulePorts, boolean invertedGyroscope, double angleReduction, double driveReduction, double wheelDiameter){
+  public Mk2SwerveDrivetrainFalcon(double trackwidth, double wheelbase, double[] angleOffsets, int[][] modulePorts, boolean invertedGyroscope, boolean navXAvailable, double angleReduction, double driveReduction, double wheelDiameter){
         //Maybe we don't need these, but might as well right?
         ANGLE_REDUCTION = angleReduction;
         DRIVE_REDUCTION = driveReduction;
@@ -139,9 +142,17 @@ public class Mk2SwerveDrivetrainFalcon extends SubsystemBase {
             new Translation2d(-TRACKWIDTH / 2.0, -WHEELBASE / 2.0)
     );
 
-    
-        gyroscope.calibrate();
-        gyroscope.setInverted(invertedGyroscope);
+    if(navXAvailable){
+            useNavX = true;
+            navGyroscope = new NavX(SPI.Port.kMXP);
+            navGyroscope.calibrate();
+            navGyroscope.setInverted(invertedGyroscope);
+    }else{
+            useNavX = false;
+            adGyroscope = new ADIS16470();
+            adGyroscope.calibrate();
+            adGyroscope.setInverted(invertedGyroscope);
+    }
 
         frontLeftModule.setName("Front Left");
         frontRightModule.setName("Front Right");
@@ -164,7 +175,7 @@ public class Mk2SwerveDrivetrainFalcon extends SubsystemBase {
         SmartDashboard.putNumber("Back Left Module Angle", Math.toDegrees(backLeftModule.getCurrentAngle()));
         SmartDashboard.putNumber("Back Right Module Angle", Math.toDegrees(backRightModule.getCurrentAngle()));
 
-        SmartDashboard.putNumber("Gyroscope Angle", gyroscope.getAngle().toDegrees());
+        SmartDashboard.putNumber("Gyroscope Angle", useNavX ? navGyroscope.getAngle().toDegrees() : adGyroscope.getAngle().toDegrees());
   }
 
   public void updateStates(){
@@ -176,10 +187,11 @@ public class Mk2SwerveDrivetrainFalcon extends SubsystemBase {
 
   public void drive(Translation2d translation, double rotation, boolean fieldOriented) {
     rotation *= 2.0 / Math.hypot(WHEELBASE, TRACKWIDTH);
+    double gyroAngle = useNavX ? navGyroscope.getAngle().toDegrees() : adGyroscope.getAngle().toDegrees();
     ChassisSpeeds speeds;
     if (fieldOriented) {
         speeds = ChassisSpeeds.fromFieldRelativeSpeeds(translation.getX(), translation.getY(), rotation,
-                Rotation2d.fromDegrees(gyroscope.getAngle().toDegrees()));
+                Rotation2d.fromDegrees(gyroAngle));
     } else {
         speeds = new ChassisSpeeds(translation.getX(), translation.getY(), rotation);
     }
@@ -192,7 +204,7 @@ public class Mk2SwerveDrivetrainFalcon extends SubsystemBase {
 }
 
 public void resetGyroscope() {
-    gyroscope.setAdjustmentAngle(gyroscope.getUnadjustedAngle());
+    navGyroscope.setAdjustmentAngle(navGyroscope.getUnadjustedAngle());
 }
 
 }
