@@ -204,7 +204,11 @@ public class Mk2SwerveDrivetrainFalcon extends SubsystemBase {
 }
 
 public void resetGyroscope() {
-    navGyroscope.setAdjustmentAngle(navGyroscope.getUnadjustedAngle());
+        if(useNavX){
+                navGyroscope.setAdjustmentAngle(navGyroscope.getUnadjustedAngle());
+        }else{
+                adGyroscope.setAdjustmentAngle(adGyroscope.getUnadjustedAngle());
+        }
 }
 
 }
