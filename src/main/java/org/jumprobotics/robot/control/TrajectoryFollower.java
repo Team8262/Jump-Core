@@ -1,7 +1,7 @@
-package org.frcteam2910.common.control;
+package org.jumprobotics.robot.control;
 
-import org.frcteam2910.common.math.RigidTransform2;
-import org.frcteam2910.common.math.Vector2;
+import org.jumprobotics.robot.math.RigidTransform2;
+import org.jumprobotics.robot.math.Vector2;
 
 import java.util.Optional;
 
