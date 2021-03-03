@@ -1,6 +1,6 @@
-package org.frcteam2910.common.util;
+package org.jumprobotics.robot.utility;
 
-import org.frcteam2910.common.math.Vector2;
+import org.jumprobotics.robot.math.Vector2;
 
 public class HolonomicFeedforward {
     private final DrivetrainFeedforwardConstants forwardConstants;
