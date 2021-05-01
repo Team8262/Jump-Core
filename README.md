@@ -1,5 +1,5 @@
 # Jump-Core
-Core Library (ripped off from 2910 until I figure out what it does)
+Core Library (think 2910, but it's ours)
 
 ## Installation Instructions:
 
