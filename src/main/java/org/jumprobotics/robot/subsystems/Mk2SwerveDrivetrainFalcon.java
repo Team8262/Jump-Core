@@ -61,10 +61,11 @@ public class Mk2SwerveDrivetrainFalcon extends SubsystemBase {
     public double DRIVE_REDUCTION;
     public double WHEEL_DIAMETER;
 
-    private SwerveModule frontLeftModule,
+    public SwerveModule frontLeftModule,
                          frontRightModule,
                          backLeftModule,
                          backRightModule;
+                         
     private SwerveDriveKinematics kinematics;
 
 
