@@ -212,4 +212,41 @@ public void resetGyroscope() {
         }
 }
 
+public void setFramePeriod(int periodMs){///both control frame period and status frame period is changed
+        TalonFX FL_Steer = new TalonFX(DRIVETRAIN_FL_STEER);
+        TalonFX FL_Drive = new TalonFX(DRIVETRAIN_FL_DRIVE);
+        TalonFX FR_Steer = new TalonFX(DRIVETRAIN_FR_STEER);
+        TalonFX FR_Drive = new TalonFX(DRIVETRAIN_FR_Drive);
+        TalonFX BL_Steer = new TalonFX(DRIVETRAIN_BL_STEER);
+        TalonFX BL_Drive = new TalonFX(DRIVETRAIN_BL_DRIVE);
+        TalonFX BR_Steer = new TalonFX(DRIVETRAIN_BR_STEER);
+        TalonFX BR_Drive = new TalonFX(DRIVETRAIN_BR_Drive);
+
+        FL_Steer.setStatusFramePeriod(1, periodMs);/// 1 refers to Status_1_General
+        FL_Drive.setStatusFramePeriod(1, periodMs);
+        FR_Steer.setStatusFramePeriod(1, periodMs);
+        FR_Drive.setStatusFramePeriod(1, periodMs);
+        BL_Steer.setStatusFramePeriod(1, periodMs);
+        BL_Drive.setStatusFramePeriod(1, periodMs);
+        BR_Steer.setStatusFramePeriod(1, periodMs);
+        BR_Drive.setStatusFramePeriod(1, periodMs);
+        ///https://www.ctr-electronics.com/downloads/api/java/html/enumcom_1_1ctre_1_1phoenix_1_1motorcontrol_1_1_status_frame.html#afc5d46cedacf46e01da84b3c0d3b9644
+        ///Make sure that the frameValue is correct, I dunno if it's correct
+        ///https://www.ctr-electronics.com/downloads/api/java/html/enumcom_1_1ctre_1_1phoenix_1_1motorcontrol_1_1_status_frame.html#afc5d46cedacf46e01da84b3c0d3b9644
+
+        FL_Steer.setControlFramePeriod(3, periodMs);/// 3 refers to Control_3_General 
+        FL_Drive.setControlFramePeriod(3, periodMs);
+        FR_Steer.setControlFramePeriod(3, periodMs);
+        FR_Drive.setControlFramePeriod(3, periodMs);
+        BL_Steer.setControlFramePeriod(3, periodMs);
+        BL_Drive.setControlFramePeriod(3, periodMs);
+        BR_Steer.setControlFramePeriod(3, periodMs);
+        BR_Drive.setControlFramePeriod(3, periodMs);
+        ///https://www.ctr-electronics.com/downloads/api/java/html/interfacecom_1_1ctre_1_1phoenix_1_1motorcontrol_1_1_i_motor_controller.html#af5da9318fb4e366f03f9b623c6d1c67d
+        ///https://www.ctr-electronics.com/downloads/api/java/html/enumcom_1_1ctre_1_1phoenix_1_1motorcontrol_1_1_control_frame.html
+        ///Make sure that the frameValue is correct, I dunno if it's correct
+
+
+    }
+
 }
