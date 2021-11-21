@@ -181,17 +181,24 @@ public class Mk2SwerveModuleBuilder {
         return this;
     }
 
-    public Mk2SwerveModuleBuilder angleMotor(TalonFX motor) {
-        return angleMotor(motor, DEFAULT_FALCON_ANGLE_CONSTANTS, DEFAULT_ANGLE_REDUCTION);
+    public Mk2SwerveModuleBuilder angleMotor(TalonFX motor){
+        return angleMotor(motor, 10);
     }
 
-    public Mk2SwerveModuleBuilder angleMotor(TalonFX motor, PidConstants constants, double reduction) {
+    public Mk2SwerveModuleBuilder angleMotor(TalonFX motor, int framerate) {
+        return angleMotor(motor, DEFAULT_FALCON_ANGLE_CONSTANTS, DEFAULT_ANGLE_REDUCTION, framerate);
+    }
+
+    public Mk2SwerveModuleBuilder angleMotor(TalonFX motor, PidConstants constants, double reduction, int framerate) {
         final double sensorCoefficient = (2.0 * Math.PI) / (reduction * 2048.0);
 
         TalonFXConfiguration config = new TalonFXConfiguration();
         config.slot0.kP = constants.p;
         config.slot0.kI = constants.i;
         config.slot0.kD = constants.d;
+
+
+        setFramePeriod(motor, framerate);
 
         motor.setNeutralMode(NeutralMode.Brake);
 
@@ -324,13 +331,19 @@ public class Mk2SwerveModuleBuilder {
     }
 
     public Mk2SwerveModuleBuilder driveMotor(TalonFX motor) {
-        return driveMotor(motor, DEFAULT_DRIVE_REDUCTION, DEFAULT_WHEEL_DIAMETER);
+        return driveMotor(motor, 10);
     }
 
-    public Mk2SwerveModuleBuilder driveMotor(TalonFX motor, double reduction, double wheelDiameter) {
+    public Mk2SwerveModuleBuilder driveMotor(TalonFX motor, int framerate){
+        return driveMotor(motor, DEFAULT_DRIVE_REDUCTION, DEFAULT_WHEEL_DIAMETER, framerate);
+    }
+
+    public Mk2SwerveModuleBuilder driveMotor(TalonFX motor, double reduction, double wheelDiameter, int framerate) {
         TalonFXConfiguration config = new TalonFXConfiguration();
         motor.configAllSettings(config);
         motor.setNeutralMode(NeutralMode.Brake);
+
+        setFramePeriod(motor, framerate);
 
         currentDrawSupplier = motor::getSupplyCurrent;
         distanceSupplier = () -> (Math.PI * wheelDiameter * motor.getSensorCollection().getIntegratedSensorPosition()) / (2048.0 * reduction);
@@ -340,6 +353,21 @@ public class Mk2SwerveModuleBuilder {
         return this;
     }
 
+
+    public void setFramePeriod(TalonFX motor, int periodMs){
+        motor.setStatusFramePeriod(1, periodMs);/// 1 refers to Status_1_General
+
+        ///https://www.ctr-electronics.com/downloads/api/java/html/enumcom_1_1ctre_1_1phoenix_1_1motorcontrol_1_1_status_frame.html#afc5d46cedacf46e01da84b3c0d3b9644
+        ///Make sure that the frameValue is correct, I dunno if it's correct
+        ///https://www.ctr-electronics.com/downloads/api/java/html/enumcom_1_1ctre_1_1phoenix_1_1motorcontrol_1_1_status_frame.html#afc5d46cedacf46e01da84b3c0d3b9644
+
+
+        motor.setControlFramePeriod(3, periodMs);/// 3 refers to Control_3_General 
+
+        ///https://www.ctr-electronics.com/downloads/api/java/html/interfacecom_1_1ctre_1_1phoenix_1_1motorcontrol_1_1_i_motor_controller.html#af5da9318fb4e366f03f9b623c6d1c67d
+        ///https://www.ctr-electronics.com/downloads/api/java/html/enumcom_1_1ctre_1_1phoenix_1_1motorcontrol_1_1_control_frame.html
+        ///Make sure that the frameValue is correct, I dunno if it's correct
+    }
     /**
      * Configures the swerve module to use a generic speed controller driving the specified motor.
      *

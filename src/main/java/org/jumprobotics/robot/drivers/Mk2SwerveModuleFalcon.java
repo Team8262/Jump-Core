@@ -118,6 +118,23 @@ public class Mk2SwerveModuleFalcon extends SwerveModule {
         return angle;
     }
 
+    public void setFramePeriod(int periodMs){
+        steeringMotor.setStatusFramePeriod(1, periodMs);/// 1 refers to Status_1_General
+        driveMotor.setStatusFramePeriod(1, periodMs);
+
+        ///https://www.ctr-electronics.com/downloads/api/java/html/enumcom_1_1ctre_1_1phoenix_1_1motorcontrol_1_1_status_frame.html#afc5d46cedacf46e01da84b3c0d3b9644
+        ///Make sure that the frameValue is correct, I dunno if it's correct
+        ///https://www.ctr-electronics.com/downloads/api/java/html/enumcom_1_1ctre_1_1phoenix_1_1motorcontrol_1_1_status_frame.html#afc5d46cedacf46e01da84b3c0d3b9644
+
+
+        steeringMotor.setControlFramePeriod(3, periodMs);/// 3 refers to Control_3_General 
+        driveMotor.setControlFramePeriod(3, periodMs);
+
+        ///https://www.ctr-electronics.com/downloads/api/java/html/interfacecom_1_1ctre_1_1phoenix_1_1motorcontrol_1_1_i_motor_controller.html#af5da9318fb4e366f03f9b623c6d1c67d
+        ///https://www.ctr-electronics.com/downloads/api/java/html/enumcom_1_1ctre_1_1phoenix_1_1motorcontrol_1_1_control_frame.html
+        ///Make sure that the frameValue is correct, I dunno if it's correct
+    }
+
     @Override
     protected double readDistance() {
         synchronized (canLock) {

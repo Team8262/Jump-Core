@@ -7,6 +7,9 @@
 
 package org.jumprobotics.robot.subsystems;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
@@ -27,6 +30,7 @@ import org.jumprobotics.robot.drivers.Gyroscope;
 import org.jumprobotics.robot.drivers.SwerveModule;
 import org.jumprobotics.robot.math.Vector2;
 import org.jumprobotics.robot.drivers.Mk2SwerveModuleBuilder;
+import org.jumprobotics.robot.drivers.Mk2SwerveModuleFalcon;
 import org.jumprobotics.robot.drivers.NavX;
 import org.jumprobotics.robot.drivers.ADIS16470;
 
@@ -68,17 +72,19 @@ public class Mk2SwerveDrivetrainFalcon extends SubsystemBase {
                          
     private SwerveDriveKinematics kinematics;
 
+    private ArrayList<SwerveModule> modules;
+
 
     public Gyroscope navGyroscope;
     public ADIS16470 adGyroscope;
     public boolean useNavX;
 
 
-    public Mk2SwerveDrivetrainFalcon(double trackwidth, double wheelbase, double[] angleOffsets, int[][] modulePorts, boolean invertedGyroscope, boolean navXAvailable) {
-            this(trackwidth, wheelbase, angleOffsets, modulePorts, invertedGyroscope, navXAvailable, 18.0 / 1.0, 8.31 / 1.0, 4.0);
+    public Mk2SwerveDrivetrainFalcon(double trackwidth, double wheelbase, double[] angleOffsets, int[][] modulePorts, boolean invertedGyroscope, boolean navXAvailable, int framerate) {
+            this(trackwidth, wheelbase, angleOffsets, modulePorts, invertedGyroscope, navXAvailable, 18.0 / 1.0, 8.31 / 1.0, 4.0, framerate);
   }
 
-  public Mk2SwerveDrivetrainFalcon(double trackwidth, double wheelbase, double[] angleOffsets, int[][] modulePorts, boolean invertedGyroscope, boolean navXAvailable, double angleReduction, double driveReduction, double wheelDiameter){
+  public Mk2SwerveDrivetrainFalcon(double trackwidth, double wheelbase, double[] angleOffsets, int[][] modulePorts, boolean invertedGyroscope, boolean navXAvailable, double angleReduction, double driveReduction, double wheelDiameter, int framerate){
         //Maybe we don't need these, but might as well right?
         ANGLE_REDUCTION = angleReduction;
         DRIVE_REDUCTION = driveReduction;
@@ -114,26 +120,26 @@ public class Mk2SwerveDrivetrainFalcon extends SubsystemBase {
         frontLeftModule = new Mk2SwerveModuleBuilder(
             new Vector2(TRACKWIDTH / 2.0, WHEELBASE / 2.0))
             .angleEncoder(new AnalogInput(DRIVETRAIN_FL_ENCODER), FRONT_LEFT_ANGLE_OFFSET)
-            .angleMotor(new TalonFX(DRIVETRAIN_FL_STEER))
-            .driveMotor(new TalonFX(DRIVETRAIN_FL_DRIVE))
+            .angleMotor(new TalonFX(DRIVETRAIN_FL_STEER), framerate)
+            .driveMotor(new TalonFX(DRIVETRAIN_FL_DRIVE), framerate)
             .build();
     frontRightModule = new Mk2SwerveModuleBuilder(
             new Vector2(TRACKWIDTH / 2.0, -WHEELBASE / 2.0))
             .angleEncoder(new AnalogInput(DRIVETRAIN_FR_ENCODER), FRONT_RIGHT_ANGLE_OFFSET)
-            .angleMotor(new TalonFX(DRIVETRAIN_FR_STEER))
-            .driveMotor(new TalonFX(DRIVETRAIN_FR_DRIVE))
+            .angleMotor(new TalonFX(DRIVETRAIN_FR_STEER), framerate)
+            .driveMotor(new TalonFX(DRIVETRAIN_FR_DRIVE), framerate)
             .build();
     backLeftModule = new Mk2SwerveModuleBuilder(
             new Vector2(-TRACKWIDTH / 2.0, WHEELBASE / 2.0))
             .angleEncoder(new AnalogInput(DRIVETRAIN_BL_ENCODER), BACK_LEFT_ANGLE_OFFSET)
-            .angleMotor(new TalonFX(DRIVETRAIN_BL_STEER))
-            .driveMotor(new TalonFX(DRIVETRAIN_BL_DRIVE))
+            .angleMotor(new TalonFX(DRIVETRAIN_BL_STEER), framerate)
+            .driveMotor(new TalonFX(DRIVETRAIN_BL_DRIVE), framerate)
             .build();
     backRightModule = new Mk2SwerveModuleBuilder(
             new Vector2(-TRACKWIDTH / 2.0, -WHEELBASE / 2.0))
             .angleEncoder(new AnalogInput(DRIVETRAIN_BR_ENCODER), BACK_RIGHT_ANGLE_OFFSET)
-            .angleMotor(new TalonFX(DRIVETRAIN_BR_STEER))
-            .driveMotor(new TalonFX(DRIVETRAIN_BR_DRIVE))
+            .angleMotor(new TalonFX(DRIVETRAIN_BR_STEER), framerate)
+            .driveMotor(new TalonFX(DRIVETRAIN_BR_DRIVE), framerate)
             .build();
 
     kinematics = new SwerveDriveKinematics(
@@ -159,15 +165,21 @@ public class Mk2SwerveDrivetrainFalcon extends SubsystemBase {
         frontRightModule.setName("Front Right");
         backLeftModule.setName("Back Left");
         backRightModule.setName("Back Right");
+
+        modules = new ArrayList<SwerveModule>(Arrays.asList(frontLeftModule, frontRightModule,backLeftModule,backRightModule));
   }
   
   //3 methods below to be called in periodic
 
   public void updateSensors(){
+        for(SwerveModule module : modules){
+                module.updateSensors();
+        }
+        /*
         frontLeftModule.updateSensors();
         frontRightModule.updateSensors();
         backLeftModule.updateSensors();
-        backRightModule.updateSensors();
+        backRightModule.updateSensors();*/
   }
 
   public void writeToSmartDashboard(){
@@ -211,42 +223,5 @@ public void resetGyroscope() {
                 adGyroscope.setAdjustmentAngle(adGyroscope.getUnadjustedAngle());
         }
 }
-
-public void setFramePeriod(int periodMs){///both control frame period and status frame period is changed
-        TalonFX FL_Steer = new TalonFX(DRIVETRAIN_FL_STEER);
-        TalonFX FL_Drive = new TalonFX(DRIVETRAIN_FL_DRIVE);
-        TalonFX FR_Steer = new TalonFX(DRIVETRAIN_FR_STEER);
-        TalonFX FR_Drive = new TalonFX(DRIVETRAIN_FR_Drive);
-        TalonFX BL_Steer = new TalonFX(DRIVETRAIN_BL_STEER);
-        TalonFX BL_Drive = new TalonFX(DRIVETRAIN_BL_DRIVE);
-        TalonFX BR_Steer = new TalonFX(DRIVETRAIN_BR_STEER);
-        TalonFX BR_Drive = new TalonFX(DRIVETRAIN_BR_Drive);
-
-        FL_Steer.setStatusFramePeriod(1, periodMs);/// 1 refers to Status_1_General
-        FL_Drive.setStatusFramePeriod(1, periodMs);
-        FR_Steer.setStatusFramePeriod(1, periodMs);
-        FR_Drive.setStatusFramePeriod(1, periodMs);
-        BL_Steer.setStatusFramePeriod(1, periodMs);
-        BL_Drive.setStatusFramePeriod(1, periodMs);
-        BR_Steer.setStatusFramePeriod(1, periodMs);
-        BR_Drive.setStatusFramePeriod(1, periodMs);
-        ///https://www.ctr-electronics.com/downloads/api/java/html/enumcom_1_1ctre_1_1phoenix_1_1motorcontrol_1_1_status_frame.html#afc5d46cedacf46e01da84b3c0d3b9644
-        ///Make sure that the frameValue is correct, I dunno if it's correct
-        ///https://www.ctr-electronics.com/downloads/api/java/html/enumcom_1_1ctre_1_1phoenix_1_1motorcontrol_1_1_status_frame.html#afc5d46cedacf46e01da84b3c0d3b9644
-
-        FL_Steer.setControlFramePeriod(3, periodMs);/// 3 refers to Control_3_General 
-        FL_Drive.setControlFramePeriod(3, periodMs);
-        FR_Steer.setControlFramePeriod(3, periodMs);
-        FR_Drive.setControlFramePeriod(3, periodMs);
-        BL_Steer.setControlFramePeriod(3, periodMs);
-        BL_Drive.setControlFramePeriod(3, periodMs);
-        BR_Steer.setControlFramePeriod(3, periodMs);
-        BR_Drive.setControlFramePeriod(3, periodMs);
-        ///https://www.ctr-electronics.com/downloads/api/java/html/interfacecom_1_1ctre_1_1phoenix_1_1motorcontrol_1_1_i_motor_controller.html#af5da9318fb4e366f03f9b623c6d1c67d
-        ///https://www.ctr-electronics.com/downloads/api/java/html/enumcom_1_1ctre_1_1phoenix_1_1motorcontrol_1_1_control_frame.html
-        ///Make sure that the frameValue is correct, I dunno if it's correct
-
-
-    }
 
 }
