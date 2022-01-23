@@ -78,6 +78,10 @@ public class Mk2SwerveDrivetrainFalcon extends SubsystemBase {
     public boolean useNavX;
 
 //Temporarily making navX only possible
+        public Mk2SwerveDrivetrainFalcon(double trackwidth, double wheelbase, double[] angleOffsets, int[][] modulePorts, boolean invertedGyroscope, boolean navXAvailable) {
+                this(trackwidth, wheelbase, angleOffsets, modulePorts, invertedGyroscope, navXAvailable, 18.0 / 1.0, 8.31 / 1.0, 4.0, 10);
+        }
+
     public Mk2SwerveDrivetrainFalcon(double trackwidth, double wheelbase, double[] angleOffsets, int[][] modulePorts, boolean invertedGyroscope, boolean navXAvailable, int framerate) {
             this(trackwidth, wheelbase, angleOffsets, modulePorts, invertedGyroscope, navXAvailable, 18.0 / 1.0, 8.31 / 1.0, 4.0, framerate);
   }
