@@ -198,7 +198,7 @@ public class Mk2SwerveModuleBuilder {
         config.slot0.kD = constants.d;
 
 
-        setFramePeriod(motor, framerate);
+        //setFramePeriod(motor, framerate);
 
         motor.setNeutralMode(NeutralMode.Brake);
 
