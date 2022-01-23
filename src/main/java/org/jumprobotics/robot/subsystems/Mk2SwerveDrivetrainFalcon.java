@@ -20,11 +20,11 @@ import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.geometry.Translation2d;
-import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.jumprobotics.robot.drivers.Gyroscope;
 import org.jumprobotics.robot.drivers.SwerveModule;
@@ -32,7 +32,6 @@ import org.jumprobotics.robot.math.Vector2;
 import org.jumprobotics.robot.drivers.Mk2SwerveModuleBuilder;
 import org.jumprobotics.robot.drivers.Mk2SwerveModuleFalcon;
 import org.jumprobotics.robot.drivers.NavX;
-import org.jumprobotics.robot.drivers.ADIS16470;
 
 public class Mk2SwerveDrivetrainFalcon extends SubsystemBase {
   
@@ -76,10 +75,9 @@ public class Mk2SwerveDrivetrainFalcon extends SubsystemBase {
 
 
     public Gyroscope navGyroscope;
-    public ADIS16470 adGyroscope;
     public boolean useNavX;
 
-
+//Temporarily making navX only possible
     public Mk2SwerveDrivetrainFalcon(double trackwidth, double wheelbase, double[] angleOffsets, int[][] modulePorts, boolean invertedGyroscope, boolean navXAvailable, int framerate) {
             this(trackwidth, wheelbase, angleOffsets, modulePorts, invertedGyroscope, navXAvailable, 18.0 / 1.0, 8.31 / 1.0, 4.0, framerate);
   }
@@ -149,17 +147,18 @@ public class Mk2SwerveDrivetrainFalcon extends SubsystemBase {
             new Translation2d(-TRACKWIDTH / 2.0, -WHEELBASE / 2.0)
     );
 
-    if(navXAvailable){
+    if(true){
             useNavX = true;
             navGyroscope = new NavX(SPI.Port.kMXP);
             navGyroscope.calibrate();
             navGyroscope.setInverted(invertedGyroscope);
-    }else{
-            useNavX = false;
-            adGyroscope = new ADIS16470();
-            adGyroscope.calibrate();
-            adGyroscope.setInverted(invertedGyroscope);
     }
+//     else{
+//             useNavX = false;
+//             adGyroscope = new ADIS16470();
+//             adGyroscope.calibrate();
+//             adGyroscope.setInverted(invertedGyroscope);
+//     }
 
         frontLeftModule.setName("Front Left");
         frontRightModule.setName("Front Right");
@@ -188,8 +187,10 @@ public class Mk2SwerveDrivetrainFalcon extends SubsystemBase {
         SmartDashboard.putNumber("Back Left Module Angle", Math.toDegrees(backLeftModule.getCurrentAngle()));
         SmartDashboard.putNumber("Back Right Module Angle", Math.toDegrees(backRightModule.getCurrentAngle()));
 
-        SmartDashboard.putNumber("Gyroscope Angle", useNavX ? navGyroscope.getAngle().toDegrees() : adGyroscope.getAngle().toDegrees());
-  }
+        //SmartDashboard.putNumber("Gyroscope Angle", useNavX ? navGyroscope.getAngle().toDegrees() : adGyroscope.getAngle().toDegrees());
+        SmartDashboard.putNumber("Gyroscope Angle",navGyroscope.getAngle().toDegrees());
+
+}
 
   public void updateStates(){
         frontLeftModule.updateState(TimedRobot.kDefaultPeriod);
@@ -200,7 +201,8 @@ public class Mk2SwerveDrivetrainFalcon extends SubsystemBase {
 
   public void drive(Translation2d translation, double rotation, boolean fieldOriented) {
     rotation *= 2.0 / Math.hypot(WHEELBASE, TRACKWIDTH);
-    double gyroAngle = useNavX ? navGyroscope.getAngle().toDegrees() : adGyroscope.getAngle().toDegrees();
+    //double gyroAngle = useNavX ? navGyroscope.getAngle().toDegrees() : adGyroscope.getAngle().toDegrees();
+    double gyroAngle = navGyroscope.getAngle().toDegrees();
     ChassisSpeeds speeds;
     if (fieldOriented) {
         speeds = ChassisSpeeds.fromFieldRelativeSpeeds(translation.getX(), translation.getY(), rotation,
@@ -219,9 +221,10 @@ public class Mk2SwerveDrivetrainFalcon extends SubsystemBase {
 public void resetGyroscope() {
         if(useNavX){
                 navGyroscope.setAdjustmentAngle(navGyroscope.getUnadjustedAngle());
-        }else{
-                adGyroscope.setAdjustmentAngle(adGyroscope.getUnadjustedAngle());
         }
+        // else{
+        //         adGyroscope.setAdjustmentAngle(adGyroscope.getUnadjustedAngle());
+        // }
 }
 
 }

@@ -10,12 +10,12 @@ package org.jumprobotics.robot.drivers;
 /**
  * Add your docs here.
  */
-import com.revrobotics.CANEncoder;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.Spark;
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import org.jumprobotics.robot.control.PidConstants;
 import org.jumprobotics.robot.control.PidController;
 import org.jumprobotics.robot.drivers.SwerveModule;
@@ -36,7 +36,7 @@ public class Mk2SwerveModule extends SwerveModule {
     private Spark steeringMotor;
     private AnalogInput angleEncoder;
     private CANSparkMax driveMotor;
-    private CANEncoder driveEncoder;
+    private RelativeEncoder driveEncoder;
 
     private final Object canLock = new Object();
     private double driveDistance = 0.0;
@@ -88,7 +88,7 @@ public class Mk2SwerveModule extends SwerveModule {
         this.steeringMotor = angleMotor;
         this.angleEncoder = angleEncoder;
         this.driveMotor = driveMotor;
-        this.driveEncoder = new CANEncoder(driveMotor);
+        this.driveEncoder = driveMotor.getEncoder();
 
         driveMotor.setSmartCurrentLimit(60);
 
