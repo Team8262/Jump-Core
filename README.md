@@ -1,9 +1,11 @@
 # Jump-Core
-Core Library (ripped off from 2910 until I figure out what it does)
+Primary reference repository for Jump Robotics
+
+It can also be imported directly
 
 ## Installation Instructions:
 
-Download Jump-Core.jar from https://github.com/Team8262/Jump-Core/releases/tag/V1.1
+Download Jump-Core.jar from https://github.com/Team8262/Jump-Core/releases
 
 Create a folder called 'libs' in the root directory of your project
 
