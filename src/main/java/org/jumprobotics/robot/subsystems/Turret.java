@@ -10,9 +10,7 @@ import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-public class Turret extends SubsystemBase {
+public class Turret{
   //Ratio of motor to turret mechanism (needed for translating motor encoder to turret angle)
   //Rotations of motor shaft per 1 rotation of turret
   private double TURRET_RATIO; 
@@ -75,10 +73,5 @@ public class Turret extends SubsystemBase {
   public Turret SET_RATIO(double ratio){
     this.TURRET_RATIO = ratio;
     return this;
-  }
-
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
   }
 }

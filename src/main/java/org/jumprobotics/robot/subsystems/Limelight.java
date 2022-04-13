@@ -7,9 +7,8 @@ package org.jumprobotics.robot.subsystems;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Limelight extends SubsystemBase {
+public class Limelight{
   /** Creates a new Limelight. */
     NetworkTable table;
     NetworkTableEntry xOffset;
@@ -57,19 +56,11 @@ public class Limelight extends SubsystemBase {
       return this;
     }
 
-    @Override
-    public void periodic() {
-        // This method will be called once per scheduler run
-        limelightX = xOffset.getDouble(0.0);
-        limelightY = ty.getDouble(0.0);
-        limelightArea = ta.getDouble(0.0);
-        targetExists = ((tv.getDouble(0.0)==1) ? 1d : 0d);
-    }
-
-
-    @Override
-    public void simulationPeriodic() {
-        // This method will be called once per scheduler run during simulation
+    public void update(){
+      limelightX = xOffset.getDouble(0.0);
+      limelightY = ty.getDouble(0.0);
+      limelightArea = ta.getDouble(0.0);
+      targetExists = ((tv.getDouble(0.0)==1) ? 1d : 0d);
     }
 
     public double getDistance() {
@@ -85,5 +76,4 @@ public class Limelight extends SubsystemBase {
     public double getXOffset() {
         return limelightX; // return the x-offset from the camera to reflective tape
     }
-}
 }
